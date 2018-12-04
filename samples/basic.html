@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Radial Gauge Chart</title>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="../build/Chart.Sunburst.umd.js"></script>
+    <script src="./utils.js"></script>
+    <style>
+      canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="canvas-holder" style="width:100%"><canvas id="chart-area"></canvas></div>
+    <button id="randomizeData">Randomize Data</button>
+    <script>
+      var randomScalingFactor = function() {
+        return Math.round(Math.random() * 100);
+      };
+
+      function randomMinMax(min, max) {
+        return Math.max(Math.ceil(Math.random() * max), min);
+      }
+
+      function splitBudget(num, budget) {
+        const parts = [];
+        for (let i = 0; i < num; i++) {
+          parts.push(budget / num);
+        }
+
+        for (let i = 0; i < num - 1; i++) {
+          const steal = Math.random() * parts[i + 1];
+          parts[i] += steal;
+          parts[i + 1] -= steal;
+        }
+
+        return parts;
+      }
+
+      let nodeCounter = 0;
+      function generateChildren({ id, value }, depth) {
+        let children = [];
+        if (depth < 1 || Math.random() < 0.75 / (depth * 0.8)) {
+          const numChildren = randomMinMax(3, 8);
+          const parts = splitBudget(numChildren, value);
+          for (let i = 0; i < numChildren; i++) {
+            const child = { parentId: id, id: nodeCounter++, value: parts[i] };
+            children.push(child);
+            children = children.concat(generateChildren(child, depth + 1));
+          }
+        }
+        return children;
+      }
+
+      function randomizeData() {
+        const root = { parentId: null, id: nodeCounter++, value: 100000 };
+        const data = [root].concat(generateChildren(root, 0));
+        return data;
+      }
+
+      Chart.defaults.global.defaultFontFamily = 'Verdana';
+
+      var ctx = document.getElementById('chart-area').getContext('2d');
+      var gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+      gradientStroke.addColorStop(0, '#80b6f4');
+      gradientStroke.addColorStop(1, '#f49080');
+
+      var config = {
+        type: 'sunburst',
+        data: {
+          labels: ['Metrics'],
+          datasets: [
+            {
+              data: randomizeData(),
+              borderWidth: 0.5,
+              label: 'Score'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          elements: {
+            arc: {
+              backgroundColor: 'orange'
+            }
+          },
+          legend: {},
+          title: {
+            display: true,
+            text: 'Sunburst Chart'
+          },
+          scaleByMetric: 'value'
+        }
+      };
+
+      var stack = [];
+      window.onload = function() {
+        var ctx = document.getElementById('chart-area').getContext('2d');
+        window.mysunburst = new Chart(ctx, config);
+      };
+
+      document.getElementById('randomizeData').addEventListener('click', function() {
+        config.data.datasets.forEach(function(dataset) {
+          dataset.data = randomizeData();
+        });
+
+        window.mysunburst.update();
+      });
+    </script>
+  </body>
+</html>
