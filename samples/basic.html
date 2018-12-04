@@ -108,9 +108,10 @@
         config.data.datasets.forEach(function(dataset) {
           dataset.data = randomizeData();
         });
+        config.options.rootId = null;
+        window.mysunburst.destroy();
         var ctx = document.getElementById('chart-area').getContext('2d');
         window.mysunburst = new Chart(ctx, config);
-        //        window.mysunburst.update();
       });
     </script>
   </body>
