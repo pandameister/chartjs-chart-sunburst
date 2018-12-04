@@ -2,7 +2,7 @@
 
 Chart.js sunburst chart implementation
 
-<img src="https://pandameister.github.io/chartjs-chart-sunburst/docs/samples/sample.gif" alt="drawing" width="250"/>
+<img src="https://pandameister.github.io/chartjs-chart-sunburst/docs/samples/samples.gif" alt="drawing" width="250"/>
 
 See [Live Sample](https://pandameister.github.io/chartjs-chart-sunburst/docs/samples/basic.html)
 
