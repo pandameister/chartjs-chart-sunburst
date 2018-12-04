@@ -104,7 +104,9 @@
         window.mysunburst = new Chart(ctx, config);
       };
 
-      document.getElementById('randomizeData').addEventListener('click', function() {
+      document.getElementById('randomizeData').addEventListener('click', null);
+
+      function bbb() {
         config.data.datasets.forEach(function(dataset) {
           dataset.data = randomizeData();
         });
@@ -112,7 +114,7 @@
         window.mysunburst.destroy();
         var ctx = document.getElementById('chart-area').getContext('2d');
         window.mysunburst = new Chart(ctx, config);
-      });
+      }
     </script>
   </body>
 </html>
